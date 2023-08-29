@@ -11,11 +11,30 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+    // 'extensions' => [
+    //     'yii\jui\YiiAsset',
+    //  ],
+    'modules' => [
+        'auth' => [
+            'class' => 'app\modules\auth\Module',
+        ],
+    ],
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'DxRGm_gyQw5k3NTMGtY0-Cfu4pgg27Fw',
         ],
+        
+        // 'authManager' => [
+        //     'class' => 'yii\rbac\DbManager',
+        //     // Optional: You can customize the RBAC database table names if needed.
+        //     // 'itemTable' => '{{%auth_item}}',
+        //     // 'itemChildTable' => '{{%auth_item_child}}',
+        //     // 'assignmentTable' => '{{%auth_assignment}}',
+        //     // 'ruleTable' => '{{%auth_rule}}',
+        // ],
+      
+     
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
@@ -43,12 +62,35 @@ $config = [
         ],
         'db' => $db,
         
+        
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+            // uncomment if you want to cache RBAC items hierarchy
+            // 'cache' => 'cache',
+        ],
+
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'smtp.gmail.com',
+                'username' => 'nicholaussomi5',
+                'password' => 'rjxfmhmlcwzrdmhi',
+                'port' => '587',
+                'encryption' => 'tls', // Use 'tls' for secure connection
+            ],
+        ],
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'report/generate' => 'report/generate-report',
             ],
+
+            
         ],
+       
         
     ],
     'params' => $params,

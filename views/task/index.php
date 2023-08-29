@@ -14,16 +14,13 @@ $this->title = 'Tasks';
 $this->params['breadcrumbs'][] = $this->title;
 $this->context->layout = 'admin';
 ?>
-
 <div id="main-content ">
    
-    <div id="page-container">
-        <!-- ============================================================== -->
-        <!-- Sales Cards  -->
-        <!-- ============================================================== -->
-        <div class="row"></div>
-
-        <div class="task-index mx-0">
+   <div id="page-container">
+       <!-- ============================================================== -->
+       <!-- Sales Cards  -->
+       <!-- ============================================================== -->
+       <div class="row"></div>
 
 <h1><?= Html::encode($this->title) ?></h1>
 
@@ -33,13 +30,12 @@ $this->context->layout = 'admin';
 
 <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-<div class="table-responsive"> <!-- Add a container div with "table-responsive" class -->
 <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'filterModel' => $searchModel,
-            'tableOptions' => ['class' => 'table table-striped table-bordered', 'style' => 'width: 80%;'], // Add custom CSS styles to the table// Add custom CSS classes to the table
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+            'id',
             'title',
             'budget',
             [
@@ -80,9 +76,9 @@ $this->context->layout = 'admin';
 function getStatusLabel($status)
 {
     $statusLabels = [
-        1 => '<span class="label label-active">Active</span>',
-        2 => '<span class="label label-inactive">Inactive</span>',
-        3 => '<span class="label label-onhold">On Hold</span>',
+        1 => '<span class="badge badge-success">Active</span>',
+        2 => '<span class="badge badge-warning">Inactive</span>',
+        3 => '<span class="badge badge-secondary">On Hold</span>',
     ];
 
     return isset($statusLabels[$status]) ? $statusLabels[$status] : '';
@@ -101,8 +97,5 @@ function getStatusClass($status)
 ?>
 
 </div>
-
-</div>
-</div>
-</div>
+   </div>
 </div>

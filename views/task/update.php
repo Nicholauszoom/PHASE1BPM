@@ -11,7 +11,9 @@ $this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'i
 $this->params['breadcrumbs'][] = 'Update';
 $this->context->layout = 'admin';
 ?>
-
+<a href="<?= Yii::$app->request->referrer ?>" class="back-arrow">
+    <span class="arrow">&#8592;</span> Back
+</a>
 <div id="main-content ">
    
     <div id="page-container">

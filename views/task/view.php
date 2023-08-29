@@ -10,7 +10,21 @@ $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => 'Tasks', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
+$this->context->layout = 'admin';
+
 ?>
+
+<a href="<?= Yii::$app->request->referrer ?>" class="back-arrow">
+    <span class="arrow">&#8592;</span> Back
+</a>
+
+<div id="main-content ">
+   
+    <div id="page-container">
+        <!-- ============================================================== -->
+        <!-- Sales Cards  -->
+        <!-- ============================================================== -->
+        <div class="row"></div>
 <div class="task-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
@@ -33,6 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'title',
             'budget',
             'code',
+            'description',
             'status',
             'created_at',
             'updated_at',
@@ -42,4 +57,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
+</div>
+    </div>
 </div>

@@ -18,6 +18,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
+
     <?php echo $form->field($model, 'project_id')->dropDownList(
     \yii\helpers\ArrayHelper::map($projectList, 'id', 'title'),
     ['prompt' => 'Select Project']

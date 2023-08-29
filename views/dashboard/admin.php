@@ -2,6 +2,7 @@
     // Get the current route URL
 
 use yii\helpers\Url;
+use app\models\Project;
 
    // Get the current route URL
 $currentUrl = Url::toRoute(Yii::$app->controller->getRoute());
@@ -22,124 +23,166 @@ $this->title = 'My Yii Application';
 
 $this->context->layout = 'admin';
 ?>
-<div id="logo">
-        <span class="big-logo">BPM System</span>
+
+
+
+   <!-- top tiles -->
+
+<div class="row justify-content-center">
+  <div class="tile_count">
+
+  <!-- /admin dash  -->
+  <?php if (Yii::$app->user->can('admin')) : ?>
+          
         
+    <div class="col-md-2 col-sm-4 tile_stats_count">
+      <span class="count_top"><i class="fa fa-clone"></i> Total Projects</span>
+      <div class="count"><?= $total ?></div>
+      <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i> </span>
+    </div>
+   
+   <div class="col-md-2 col-sm-4 tile_stats_count">
+      <span class="count_top"><i class="fa fa-users"></i> Team </span>
+      <div class="count "><?=$team?></div>
+      <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i> </span>
+    </div> 
+
+
+    <div class="col-md-2 col-sm-4 tile_stats_count">
+      <span class="count_top"><i class="fa fa-check"></i> Complete Projects</span>
+      <div class="count "><?= $successCount ?></div>
+      <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i></span>
     </div>
 
-    <div id="left-menu">
-    <ul>
-        <?php foreach ($sidebarItems as $sidebarItem): ?>
-            <li class="<?= Url::toRoute($sidebarItem['url']) === $currentUrl ? 'active' : '' ?>">
-                <a href="<?= Url::to($sidebarItem['url']) ?>">
-                    <i class="<?= $sidebarItem['icon'] ?>"></i>
-                    <span><?= $sidebarItem['label'] ?></span>
-                </a>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-</div>
-    <div id="main-content">
-        <div id="header">
-            <div class="header-left float-left">
-                <i id="toggle-left-menu" class="ion-android-menu"></i>
-            </div>
-            <div class="header-right float-right">
-                <i class="ion-ios-people"></i>
-            </div>
-        </div>
 
-        <div id="page-container">
-        
-          <!-- ============================================================== -->
-          <!-- Sales Cards  -->
-          <!-- ============================================================== -->
+    <div class="col-md-2 col-sm-4 tile_stats_count">
+      <span class="count_top"><i class="fa fa-close"></i> Fail Projects</span>
+      <div class="count "><?= $fail?></div>
+      <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i></i> </span>
+    </div>
+
+
+    <div class="col-md-2 col-sm-6 tile_stats_count">
+  <span class="count_top"><i class="fa fa-money"></i>Total Projects Budget</span>
+  <div class="">
+    TSH <?=$totalBudget ?>
+  </div>
+  <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i></span>
+</div>
+<?php endif; ?>
+<!-- /admin dash end -->
+
+<!-- /Project Manager Dashboard -->
+<?php if (Yii::$app->user->can('author')) : ?>
+      
+<div class="col-md-2 col-sm-4 tile_stats_count">
+      <span class="count_top"><i class="fa fa-clone"></i> Assigned Project</span>
+      <?php
+        $userId = Yii::$app->user->getId();
+        $projectCount = Project::find()
+            ->where(['user_id' => $userId])
+            ->count();
+        ?>
+        <div class="count"><?= $projectCount ?></div>
+      <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i> </span>
+    </div>
+
+    <div class="col-md-2 col-sm-4 tile_stats_count">
+    <?php
+        $userId = Yii::$app->user->getId();
+        $projectSuccess = Project::find()
+            ->where(['user_id' => $userId])
+            ->andWhere(['status' => 1])
+            ->count();
+        ?>
+      <span class="count_top"><i class="fa fa-check"></i> Complete Project</span>
+      <div class="count "><?=$projectSuccess?></div>
+      <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i></span>
+    </div>
+
+    <div class="col-md-2 col-sm-4 tile_stats_count">
+    <?php
+        $userId = Yii::$app->user->getId();
+        $projectHold = Project::find()
+            ->where(['user_id' => $userId])
+            ->andWhere(['status' => 3])
+            ->count();
+        ?>
+      <span class="count_top"><i class="fa fa-check"></i> Projects OnHold</span>
+      <div class="count "><?=$projectHold?></div>
+      <span class="count_bottom"><i class="warning" style="color:yellow"> <i class="fa fa-sort-asc"></i></i></span>
+    </div>
+
+    <div class="col-md-2 col-sm-4 tile_stats_count">
+    <?php
+$userId = Yii::$app->user->getId();
+
+// Count failed projects for the logged-in user
+$projectFail = Project::find()
+    ->where(['user_id' => $userId])
+    ->andWhere(['status' => 2])
+    ->count();
+?>
+      <span class="count_top"><i class="fa fa-close"></i> Fail Project</span>
+      <div class="count "><?=$projectFail?></div>
+      <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i></i> </span>
+    </div>
+
+
+    <div class="col-md-2 col-sm-6 tile_stats_count">
+
+    <?php
+$userId = Yii::$app->user->getId();
+
+// Find projects assigned to the user
+$projects = Project::find()
+    ->where(['user_id' => $userId])
+    ->all();
+
+// Calculate the total project budget for the assigned projects
+$projectBudget = 0;
+foreach ($projects as $project) {
+    $projectBudget += $project->budget;
+}
+?>
+  <span class="count_top"><i class="fa fa-money"></i>Projects Budget</span>
+  <div class="">
+    <?=$projectBudget?>
+  </div>
+  <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i></i></span>
+</div>
+<?php endif; ?>
+<!-- /pm end -->
+  </div>
+</div>
+          <!-- /top tiles -->
+       
+           
           <div class="row">
+            <div class="col-md-12 col-sm-12 ">
+              <div class="dashboard_graph">
 
-<!-- Column -->
-<div class="col-md-6 col-lg-4 col-xlg-3">
-    <div class="card card-hover">
-        <div class="box bg-success text-center">
-            <h1 class="font-light text-white">
-                <i class="bi bi-layers"></i>
-            </h1>
-            <h6 class="text-white">Total Tender</h6>
-            <h3 class="text-white"><?= $total ?></h3>
-        </div>
-    </div>
-</div>
-<!-- Column -->
+                <div class="row x_title">
+                  <div class="col-md-6">
+                   
+                  
 
-<!-- Column -->
-<div class="col-md-6 col-lg-4 col-xlg-3">
-    <div class="card card-hover">
-        <div class="box bg-task text-center">
-            <h1 class="font-light text-white">
-                <i class="bi bi-check2-square"></i>
-            </h1>
-            <h6 class="text-white">Total Task</h6>
-            <h3 class="text-white"><?=$task?></h3>
-        </div>
-    </div>
-</div>
-<!-- Column -->
+                  </div>
+                  <div class="col-md-6">
+                   
+                  </div>
+                </div>
+                <?php if (Yii::$app->user->can('admin')) : ?>
+                <div class="col-md-9 col-sm-9 ">
+                  <div id="chart_plot_01" class="demo-placeholder"></div>
+                </div>
+              
+                <div class="col-md-3 col-sm-3  bg-white">
+                  <div class="x_title">
 
-<!-- Column -->
-<div class="col-md-6 col-lg-4 col-xlg-3">
-    <div class="card card-hover">
-        <div class="box bg-blue text-center"> <!-- Update the class to "bg-blue" -->
-            <h1 class="font-light text-white">
-                <i class="bi bi-people"></i>
-            </h1>
-            <h6 class="text-white">Team</h6>
-            <h3 class="text-white"><?=$team?></h3></h3>
-        </div>
-    </div>
-</div>
-
-<div class="col-md-6 col-lg-4 col-xlg-3">
-    <div class="card card-hover">
-        <div class="box bg-complete text-center"> <!-- Update the class to "bg-blue" -->
-            <h1 class="font-light text-white">
-                <i class="bi bi-shield-check"></i>
-            </h1>
-            <h6 class="text-white">Complete Tender</h6>
-            <h3 class="text-white"><?= $successCount ?></h3>
-        </div>
-    </div>
-</div>
-
-<div class="col-md-6 col-lg-4 col-xlg-3">
-    <div class="card card-hover">
-        <div class="box bg-fail text-center"> <!-- Update the class to "bg-blue" -->
-            <h1 class="font-light text-white">
-                <i class="bi bi-shield-fill-exclamation"></i>
-            </h1>
-            <h6 class="text-white">Fail Tender</h6>
-            <h3 class="text-white"><?= $fail?></h3>
-        </div>
-    </div>
-</div>
-
-
-<!-- Column -->
-<div class="col-md-6 col-lg-4 col-xlg-3">
-    <div class="card card-hover">
-        <div class="box bg-employee text-center">
-            <h1 class="font-light text-white">
-                <i class="bi bi-person"></i>
-            </h1>
-            <h6 class="text-white">Employee</h6>
-            <h3 class="text-white">100</h3>
-        </div>
-    </div>
-</div>
-<!-- Column -->
-<div>
-    <center>
-<h3 class="align-text-center mt-10 mr-20">
+                  <h6 class="align-text-center mt-10 mr-20">
  Graph of Complete Tender per Moth|Year
-</h3></center>
+</h6>
 <!-- Add the canvas element where the graph will be rendered -->
 <canvas id="projectChart"></canvas>
 
@@ -177,15 +220,10 @@ $this->context->layout = 'admin';
     });
 </script>
 
-
-
-
-
-
-<center>
-<h3 class="align-text-center mt-10 mr-20">
+                   
+                    <h6 class="align-text-center mt-10 mr-20">
  Graph of Incomplete Tender per Moth|Year
-</h3></center>
+</h6>
 <!-- Add the canvas element where the graph will be rendered -->
 <canvas id="projectCharts"></canvas>
 
@@ -223,13 +261,61 @@ $this->context->layout = 'admin';
     });
 </script>
 
-</div>
+                  </div>
 
-</div>
+                
+                </div>
+               
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+               
+                <canvas id="chart"></canvas>
 
-</div>
-</div>
-    <span id="show-lable">Hello</span>
+<script>
+    var data = <?= $data ?>;
+
+    // Prepare the data for the chart
+    var labels = data.map(item => item.year);
+    var values = data.map(item => item.total_budget);
+
+    // Create the chart
+    var ctx = document.getElementById('chart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Budget',
+                data: values,
+                backgroundColor: 'blue'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+<?php endif; ?>
+
+                <div class="clearfix"></div>
+              </div>
+            </div>
+
+          </div>
+          <br />
+
+       
 
 
-    
+     
+           
+
+
+             
+                
+
+ 

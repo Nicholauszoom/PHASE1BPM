@@ -17,7 +17,7 @@ class ProjectSearch extends Project
     public function rules()
     {
         return [
-            [['id', 'created_at', 'updated_at', 'created_by','status'], 'integer'],
+            [['id', 'created_at', 'updated_at', 'created_by','status', 'progress','start_at','end_at'], 'integer'],
             [['title', 'description', 'budget', 'ducument'], 'safe'],
         ];
     }
@@ -60,6 +60,9 @@ class ProjectSearch extends Project
         $query->andFilterWhere([
             'id' => $this->id,
             'status' => $this->status,
+            'progress'=>$this->progress,
+            'start_at' => $this->start_at,
+            'end_at' => $this->end_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'created_by' => $this->created_by,

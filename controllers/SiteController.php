@@ -2,14 +2,19 @@
 
 namespace app\controllers;
 
+use app\models\Analysis;
+use app\models\AuthItem;
+use app\models\Department;
 use app\models\SignupForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use yii\web\ForbiddenHttpException;
 
 class SiteController extends Controller
 {
@@ -75,12 +80,12 @@ class SiteController extends Controller
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-
+    
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            return $this->redirect(['/dashboard/admin']);
         }
-
+    
         $model->password = '';
         return $this->render('login', [
             'model' => $model,
@@ -89,14 +94,23 @@ class SiteController extends Controller
 
 
     public function actionSignup(){
+        if(Yii::$app->user->can('admin'))
+        {
+        $department =Department::find()->all();
         $model = new  SignupForm();
-
+        $authItems = AuthItem::find()->all();
         if ($model->load(Yii::$app->request->post()) && $model->signUp()){
             return $this->redirect(Yii::$app->homeUrl);
         }
         return $this->render('signup',[
             'model'=>$model,
+            'authItems' => $authItems,
+            'department'=> $department,
         ]);
+    }else
+    {
+        throw new ForbiddenHttpException;
+    }
     }
 
     /**
@@ -138,4 +152,29 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
+    public function actionDownloadBoq($id)
+{
+    // Find the details record based on the provided $id
+    $details = Analysis::findOne($id);
+
+    if (!$details) {
+        throw new NotFoundHttpException('The requested details record does not exist.');
+    }
+
+    // Get the path to the BOQ file
+    $boqFilePath = Yii::getAlias('@webroot/upload/') . $details->boq;
+
+    // Check if the BOQ file exists
+    if (!file_exists($boqFilePath)) {
+        throw new NotFoundHttpException('The BOQ file does not exist.');
+    }
+
+    // Set the response headers for downloading the file
+    Yii::$app->response->sendFile($boqFilePath, $details->boq, ['inline' => false]);
+
+    // Return the response to end the action
+    return Yii::$app->response;
+}
+
 }

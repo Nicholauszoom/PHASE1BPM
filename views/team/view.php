@@ -14,6 +14,10 @@ $this->context->layout = 'admin';
 
 ?>
 
+<a href="<?= Yii::$app->request->referrer ?>" class="back-arrow">
+    <span class="arrow">&#8592;</span> Back
+</a>
+
 <div id="main-content ">
    
     <div id="page-container">
@@ -48,6 +52,28 @@ $this->context->layout = 'admin';
            
         ],
     ]) ?>
+
+
+<h3 class="display-6">Team Members:(<?= count($model->users) ?>)</h3>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">name</th>
+    </tr>
+  </thead>
+  <?php foreach ($model->users as $user): ?>
+    <tr>
+      <th scope="row">1</th>
+      <td><?= Html::encode($user->username) ?></td>
+
+    </td>
+
+    </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>
 
 </div>
     </div>

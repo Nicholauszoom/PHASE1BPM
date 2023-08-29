@@ -14,12 +14,14 @@ use yii\behaviors\TimestampBehavior;
  * @property string $title
  * @property int $budget
  * @property string $code
+ * @property string $description
  * @property int|null $created_at
  * @property int|null $updated_at
  * @property int|null $created_by
  * @property int $project_id
  * @property int $status
  * @property int $team_id
+ * @property int $user_id
  */
 class Task extends \yii\db\ActiveRecord
 {
@@ -56,7 +58,7 @@ class Task extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'budget', 'code', 'project_id', 'team_id','status'], 'required'],
+            [['title', 'budget', 'code', 'project_id', 'team_id','status','description'], 'required'],
             [['budget', 'created_at', 'updated_at', 'created_by', 'project_id', 'team_id'], 'integer'],
             [['title', 'code'], 'string', 'max' => 255],
         ];
@@ -73,6 +75,7 @@ class Task extends \yii\db\ActiveRecord
             'budget' => 'Budget',
             'code' => 'Code',
             'project_id' => 'Project',
+            'description'=> 'Description',
             'team_id' => 'Team',
             'status'=>'Status',
             'created_at' => 'Created At',
@@ -90,4 +93,5 @@ class Task extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Team::class, ['id' => 'team_id']);
     }
+  
 }

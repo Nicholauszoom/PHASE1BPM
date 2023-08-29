@@ -7,17 +7,31 @@
 
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
+use yii\helpers\ArrayHelper;
 
 $this->title = 'Sign Up';
 $this->params['breadcrumbs'][] = $this->title;
+// $this->context->layout = 'admin';
+
 ?>
-<div class="site-login mt-20">
+
+<a href="<?= Yii::$app->request->referrer ?>" class="back-arrow">
+    <span class="arrow">&#8592;</span> Back
+</a>
+<div id="main-content ">
+   
+    <div id="page-container">
+        <!-- ============================================================== -->
+        <!-- Sales Cards  -->
+        <!-- ============================================================== -->
+        <div class="row"></div>
+<div class="site-login">
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>Please fill out the following fields to signup:</p>
 
-    <div class="row">
-        <div class="col-lg-5">
+   
+       
 
             <?php $form = ActiveForm::begin([
                 'id' => 'signup-form',
@@ -29,11 +43,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ]); ?>
 
+              <?php echo $form->field($model, 'department')->dropDownList(
+               \yii\helpers\ArrayHelper::map($department, 'id', 'name'),
+                ['prompt' => 'Select Department']
+              ) ; ?>
+            <?= $form->field($model, 'email')->textInput(['autofocus' => true]) ?>
             <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
             <?= $form->field($model, 'password')->passwordInput() ?>
             <?= $form->field($model, 'password_repeat')->passwordInput() ?>
-
-
+           
+            <?php 
+           
+                 $authItems = ArrayHelper::map($authItems,'name','name');
+                 
+            ?>
+           <ul>
+            <?= $form->field($model,'permissions')->checkboxList($authItems); ?>
+            </ul>
             <div class="form-group">
                 <div>
                     <?= Html::submitButton('SignUp', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
@@ -43,7 +69,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php ActiveForm::end(); ?>
 
          
-
+      
+    </div>
         </div>
     </div>
 </div>

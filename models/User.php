@@ -4,11 +4,13 @@ namespace app\models;
 
 use Yii;
 use yii\web\IdentityInterface;
+use app\components\UserIdentity;
 
 /**
  * This is the model class for table "user".
  *
  * @property int $id
+ * @property int $role_id
  * @property string $username
  * @property string $password
  * @property string $auth_key
@@ -30,7 +32,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['username', 'password', 'auth_key', 'access_token'], 'required'],
+            [['username', 'password', 'auth_key', 'access_token','role_id'], 'required'],
             [['username'], 'string', 'min'=>4 ,'max' => 55],
             [['password', 'auth_key', 'access_token'], 'string', 'max' => 255],
         ];
@@ -45,6 +47,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'id' => 'ID',
             'username' => 'Username',
             'password' => 'Password',
+            'role_id' => 'Role',
             'auth_key' => 'Auth Key',
             'access_token' => 'Access Token',
         ];
@@ -75,6 +78,16 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public static function findByUsername($username)
     {
         return self::findOne(['username'=>$username]);
+    }
+     /**
+     * Finds user by email
+     *
+     * @param string $email
+     * @return static|null
+     */
+    public static function findByEmail($email)
+    {
+        return self::findOne(['email'=>$email]);
     }
 
     /**
@@ -111,6 +124,37 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return Yii::$app->security->validatePassword($password,$this->password);
     }
+
+    public function getRoles()
+    {
+        return $this->hasMany(Role::class, ['id' => 'role_id'])
+            ->viaTable('role_user', ['user_id' => 'id']);
+    }
+    
+    // public function hasPermission($permissionName)
+    // {
+    //     $role = $this->role;
+    //     if ($role) {
+    //         $permissions = $role->getPermissions();
+    //         foreach ($permissions as $permission) {
+    //             if ($permission->name === $permissionName) {
+    //                 return true;
+    //             }
+    //         }
+    //     }
+        
+    //     return false;
+    // }
+
+    public function isAdmin()
+    {
+        // Check if the user has the 'admin' item_name in the auth_assignment table
+        $isAdmin = AuthAssignment::find()
+            ->where(['user_id' => $this->id, 'item_name' => 'admin'])
+            ->exists();
+
+        return $isAdmin;
+    }
+    
 }
    
-

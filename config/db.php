@@ -18,5 +18,7 @@ return [
             'username' => 'root',
             'password' => '',
             'charset' => 'utf8',
+            'enableLogging' => true,
+            'enableProfiling' => true,
   
 ];

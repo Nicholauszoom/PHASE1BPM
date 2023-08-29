@@ -13,7 +13,9 @@ $this->context->layout = 'admin';
 
 ?>
 
-
+<a href="<?= Yii::$app->request->referrer ?>" class="back-arrow">
+    <span class="arrow">&#8592;</span> Back
+</a>
 
     <div id="page-container">
         <!-- ============================================================== -->
@@ -26,6 +28,8 @@ $this->context->layout = 'admin';
 
     <?= $this->render('_form', [
         'model' => $model,
+        'users'=>$users,
+        
      
     ]) ?>
 

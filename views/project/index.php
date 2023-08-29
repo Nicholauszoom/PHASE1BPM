@@ -10,11 +10,13 @@ use yii\i18n\Formatter;
 /** @var yii\web\View $this */
 /** @var app\models\ProjectSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
-$this->context->layout = 'admin';
+// $this->context->layout = 'admin';
 $this->title = 'Projects';
 $this->params['breadcrumbs'][] = $this->title;
-
+$this->context->layout = 'admin';
 $currentUrl = Url::toRoute(Yii::$app->controller->getRoute());
+$this->registerCssFile('https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css');
+$this->registerJsFile('https://code.jquery.com/ui/1.12.1/jquery-ui.js');
 
 // Define an array of sidebar items with their URLs and labels
 $sidebarItems = [
@@ -27,26 +29,11 @@ $sidebarItems = [
     ['url' => ['/setting'], 'label' => 'Settings', 'icon' => 'bi bi-gear'],
 ];
 ?>
-<div id="logo">
-    <span class="big-logo">BPM System</span>
-    <h3><?= Html::encode($this->title) ?></h3>
-</div>
-
-<div id="left-menu">
-    <ul>
-        <?php foreach ($sidebarItems as $sidebarItem): ?>
-            <li class="<?= Url::to($sidebarItem['url']) === $currentUrl ? 'active' : '' ?>">
-                <a href="<?= Url::to($sidebarItem['url']) ?>">
-                    <i class="<?= $sidebarItem['icon'] ?>"></i>
-                    <span><?= $sidebarItem['label'] ?></span>
-                </a>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-</div>
 
 
-<div id="main-content ">
+<div id="main-content "><a href="<?= Yii::$app->request->referrer ?>" class="back-arrow">
+    <span class="arrow">&#8592;</span> Back
+</a>
    
     <div id="page-container">
         <!-- ============================================================== -->
@@ -70,9 +57,15 @@ $sidebarItems = [
                     'budget',
                     
                     [
-                        'attribute' => 'created_at',
+                        'attribute' => 'progress',
+                        'format' => 'raw',
                         'value' => function ($model) {
-                            return Yii::$app->formatter->asDatetime($model->created_at);
+                            $progress = $model->progress;
+                            $progressBar = '<div class="progress progress_sm">';
+                            $progressBar .= '<div class="progress-bar bg-green" role="progressbar" style="width: ' . $progress . '%;"></div>';
+                            $progressBar .= '</div>';
+                            $progressBar .= '<small>' . $progress . '% Complete</small>';
+                            return $progressBar;
                         },
                     ],
                     [
@@ -85,15 +78,22 @@ $sidebarItems = [
                             return ['class' => getStatusClass($model->status)];
                         },
                     ],
+                    [
+                        'attribute' => 'created_at',
+                        'value' => function ($model) {
+                            return Yii::$app->formatter->asDatetime($model->created_at);
+                        },
+                    ],
                     //'updated_at',
                     //'created_by',
                     //'ducument',
-                    [
-                        'class' => ActionColumn::className(),
-                        'urlCreator' => function ($action, Project $model, $key, $index, $column) {
-                            return Url::toRoute([$action, 'id' => $model->id]);
-                        }
-                    ],
+                    // [
+                    //     'class' => ActionColumn::className(),
+                    //     'urlCreator' => function ($action, Project $model, $key, $index, $column) {
+                    //         return Url::toRoute([$action, 'id' => $model->id]);
+                    //     }
+                    // ],
+                   
                 ],
             ]); ?>
 
@@ -101,9 +101,9 @@ $sidebarItems = [
 function getStatusLabel($status)
 {
     $statusLabels = [
-        1 => '<span class="label label-active">Active</span>',
-        2 => '<span class="label label-inactive">Inactive</span>',
-        3 => '<span class="label label-onhold">On Hold</span>',
+        1 => '<span class="badge badge-success">Active</span>',
+        2 => '<span class="badge badge-warning">Inactive</span>',
+        3 => '<span class="badge badge-secondary">On Hold</span>',
     ];
 
     return isset($statusLabels[$status]) ? $statusLabels[$status] : '';

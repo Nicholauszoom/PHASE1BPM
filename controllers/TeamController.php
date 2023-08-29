@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\models\Task;
 use app\models\Team;
 use app\models\TeamSearch;
+use app\models\User;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -70,6 +71,8 @@ class TeamController extends Controller
     {
         $model = new Team();
         $taskList = Task::find()->all();
+        $userList = User::find()->all();
+
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -82,6 +85,7 @@ class TeamController extends Controller
         return $this->render('create', [
             'model' => $model,
              'taskList'=> $taskList,
+             'userList'=> $userList,
         ]);
     }
 
@@ -95,6 +99,7 @@ class TeamController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $userList = User::find()->all();
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -102,6 +107,8 @@ class TeamController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'userList'=> $userList,
+
         ]);
     }
 

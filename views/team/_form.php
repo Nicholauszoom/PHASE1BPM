@@ -16,7 +16,10 @@ $this->context->layout = 'admin';
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-  
+    <?= $form->field($model, 'user_id')->checkboxList(
+    \yii\helpers\ArrayHelper::map($userList, 'id', 'username')
+) ?>
+
     <?= $form->field($model, 'status')->dropDownList(
     [
         1 => 'Active',

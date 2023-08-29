@@ -16,6 +16,8 @@ use yii\behaviors\TimestampBehavior;
  * @property int|null $updated_at
  * @property int|null $created_by
  * @property int $task_id
+ * @property int $project_id
+ * @property int $user_id
  */
 class Team extends \yii\db\ActiveRecord
 {
@@ -53,9 +55,10 @@ class Team extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'status'], 'required'],
-            [['status', 'created_at', 'updated_at', 'created_by'], 'integer'],
+            [['name', 'status','project_id','user_id'], 'required'],
+            [['status', 'created_at', 'updated_at','project_id', 'created_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
+            [['user_id'], 'safe'],
         ];
     }
 
@@ -67,7 +70,9 @@ class Team extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
+            'user_id'=>'Member',
             'status' => 'Status',
+            'project_id' => 'project_id',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'created_by' => 'Created By',
@@ -76,4 +81,12 @@ class Team extends \yii\db\ActiveRecord
     }
 
 
+
+
+
+public function getUsers()
+{
+    return $this->hasMany(User::class, ['id' => 'user_id'])
+        ->viaTable('team_user', ['team_id' => 'id']);
+}
 }
